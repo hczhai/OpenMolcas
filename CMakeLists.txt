@@ -1175,6 +1175,8 @@ if (LINALG STREQUAL "MKL")
                 endif ()
                 set (MKL_LIBRARY_PATH ${libpath} CACHE PATH
                         "location of MKL libraries." FORCE)
+                set (MKL_LIBRARY_PATH_ALT "${MKLROOT}/lib" CACHE PATH
+                        "alternative location of MKL libraries." FORCE)
                 # uncache variables
                 unset (LIBMKL_CORE CACHE)
                 unset (LIBMKL_INTERFACE CACHE)
@@ -1187,47 +1189,51 @@ if (LINALG STREQUAL "MKL")
         endif ()
         message ("-- MKL_INCLUDE_PATH = ${MKL_INCLUDE_PATH}")
         message ("-- MKL_LIBRARY_PATH = ${MKL_LIBRARY_PATH}")
+        message ("-- MKL_LIBRARY_PATH_ALT = ${MKL_LIBRARY_PATH_ALT}")
 
+        SET(CMAKE_FIND_LIBRARY_SUFFIXES_BKP ${CMAKE_FIND_LIBRARY_SUFFIXES})
+        SET(CMAKE_FIND_LIBRARY_SUFFIXES "${CMAKE_FIND_LIBRARY_SUFFIXES_BKP};.so.1;.1.dylib;.so.2;.2.dylib;.so.3;.3.dylib;.so.4;.4.dylib")
         # core library
         find_library (LIBMKL_CORE NAMES "mkl_core"
-                PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         # compiler-specific library interface
         if (CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
                 find_library (LIBMKL_INTERFACE NAMES "mkl_gf_ilp64"
-                        PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                        PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         elseif (CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
                 find_library (LIBMKL_INTERFACE NAMES "mkl_intel_ilp64"
-                        PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                        PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         elseif (CMAKE_Fortran_COMPILER_ID STREQUAL "PGI") # apparently PGI uses this too
                 find_library (LIBMKL_INTERFACE NAMES "mkl_intel_ilp64"
-                        PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                        PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         endif ()
         # sequential/compiler-specific threading interface
         find_library (LIBMKL_SEQUENTIAL NAMES "mkl_sequential"
-                PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         if (CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
                 set (LIBMKL_OMP_LINK_FLAGS "${FFLAGS_GNU_OPENMP}")
                 find_library (LIBMKL_THREADING NAMES "mkl_gnu_thread"
-                        PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                        PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         elseif (CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
                 set (LIBMKL_OMP_LINK_FLAGS "${FFLAGS_Intel_OPENMP}")
                 find_library (LIBMKL_THREADING NAMES "mkl_intel_thread"
-                        PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                        PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         endif ()
         # find scalapack/blacs for parallel lapack support
         find_library (LIBMKL_SCALAPACK NAMES "mkl_scalapack_ilp64"
-                PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         if (MPI_IMPLEMENTATION STREQUAL "openmpi")
                 list (APPEND MKL_LIB_NAMES "-lmkl_blacs_openmpi_ilp64")
                 find_library (LIBMKL_BLACS NAMES "mkl_blacs_openmpi_ilp64"
-                        PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                        PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         elseif (MPI_IMPLEMENTATION STREQUAL "impi")
                 find_library (LIBMKL_BLACS NAMES "mkl_blacs_intelmpi_ilp64"
-                        PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                        PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         elseif (MPI_IMPLEMENTATION STREQUAL "mpich")
                 find_library (LIBMKL_BLACS NAMES "mkl_blacs_ilp64"
-                        PATHS ${MKL_LIBRARY_PATH} NO_DEFAULT_PATH)
+                        PATHS ${MKL_LIBRARY_PATH} ${MKL_LIBRARY_PATH_ALT} NO_DEFAULT_PATH)
         endif ()
+        SET(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES_BKP})
 
         # generate actual library list with paths
         if (MPI)
