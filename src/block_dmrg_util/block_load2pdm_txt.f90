@@ -42,7 +42,7 @@ subroutine block_load2pdm_txt( NAC, PT, CHEMROOT, TRANS )
   file_2rdm=trim(adjustl(file_2rdm))
 
   call f_inquire(file_2rdm, irdm)
-  if (.NOT. irdm) then
+  if (irdm == 0) then
      write(6,'(1X,A15,I3,A16)') 'BLOCK> Root: ',CHEMROOT,' :: No 2RDM file'
      call abend()
   endif

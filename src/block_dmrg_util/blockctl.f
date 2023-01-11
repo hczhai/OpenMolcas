@@ -42,7 +42,7 @@
 
       Dimension LW1(*), TUVX(*)
 
-      Integer iChMolpro(8)
+      Integer iChMolpro(8), chemroot
       Character*3 Label
       character(len=150) :: imp1
       character(len=3) :: block_nprocs, char_lroots
@@ -214,6 +214,9 @@ C Local print level (if any)
       write(LUTOTE,'(A7,I6)') 'maxiter', 50
       write(LUTOTE,'(A6)') 'twopdm'
       write(LUTOTE,'(A11)') 'memory 10 g'
+#ifdef _BLOCK2_
+      write(LUTOTE,'(A10)') 'openmolcas'
+#endif
 
 ! Always use restart option from 2nd iteration
       if (IRST>0 .or. blockrestart.EQV..TRUE.) then
@@ -247,6 +250,20 @@ C Local print level (if any)
 
       close(LUTOTE)
 
+#ifdef _BLOCK2_
+      call get_environment_variable("MOLCAS_BLOCK",
+     &                                block_nprocs, status=ierr)
+        if (ierr.NE.0) then
+          imp1="block2main dmrg.conf >dmrg.out
+     &         2>dmrg.err"
+        else
+          imp1 = "mpirun --bind-to none -np "
+     &    //trim(adjustl(block_nprocs))//
+     &   " block2main dmrg.conf >dmrg.out 2>dmrg.err"
+        endif
+
+      call systemf(imp1,iErr)
+#else
       call get_environment_variable("MOLCAS_BLOCK",
      &                                block_nprocs, status=ierr)
         if (ierr.NE.0) then
@@ -264,6 +281,7 @@ C Local print level (if any)
      & trim(adjustl(char_lroots)) //' |
      &      cut -c 88- > block.energy'
       call systemf(imp1,iErr)
+#endif
 
       LUTOTE = isFreeUnit(30)
       call molcas_open(LUTOTE,'block.energy')

@@ -119,3 +119,6 @@ Tools/pymolcas/*.egg-info
 /molcas-*
 /make-*
 /build*
+
+install/
+my_test/

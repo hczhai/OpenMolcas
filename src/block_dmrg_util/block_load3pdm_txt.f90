@@ -42,7 +42,7 @@ subroutine block_load3pdm_txt( NAC, PT, CHEMROOT, TRANS )
   file_3rdm=trim(adjustl(file_3rdm))
 
   call f_inquire(file_3rdm, irdm)
-  if (.NOT. irdm) then
+  if (irdm == 0) then
      write(6,'(1X,A15,I3,A16)') 'BLOCK> Root: ',CHEMROOT,' :: No 3RDM file'
      call abend()
   endif
