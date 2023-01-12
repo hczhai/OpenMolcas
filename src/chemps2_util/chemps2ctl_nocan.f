@@ -373,12 +373,10 @@
 
       close(LUCHEMIN)
 
+#ifdef _MOLCAS_MPP_
       if ( Is_Real_Par() ) then
           CALL MPI_Barrier(MPI_COMM_WORLD, IERROR4)
       end if
-
-
-#ifdef _MOLCAS_MPP_
       write(6,'(1X,A21,I3)') 'CHEMPS2> ITERATION : ', ITER
       if ( KING() .OR. curdir == 'NG') then
 #endif
@@ -489,7 +487,7 @@
 
 
 !Quan: check chemps2 convergence
-      write (rootindex, "(I2)") lroots+8
+      write (rootindex, "(I2)") lroots+12
       imp1=""
       imp1="grep ""***  2-RDM"" -B "//trim(adjustl(rootindex))//
      & " chemps2.log | grep ""Energy difference"""//
