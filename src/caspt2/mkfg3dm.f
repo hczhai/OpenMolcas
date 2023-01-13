@@ -530,9 +530,10 @@ C  only for the G1 and G2 replicate arrays
       CALL GADSUM(F2,NG2)
 
 #ifdef _ENABLE_BLOCK_DMRG_
-      if (doCumulant) then
+      if (doCumulant .or. doExactRDM) then
       NLEV4=NLEV2**2
       Call GETMEM('G3TMP','ALLO','REAL',LG3TMP,NLEV4)
+C will not do cu if doExactRDM in the block2 case
       Call MKFG3CU4(IFF,G1,F1,G2,F2,G3,F3,idxG3,Work(LG3TMP))
       Call GETMEM('G3TMP','FREE','REAL',LG3TMP,NLEV4)
       endif

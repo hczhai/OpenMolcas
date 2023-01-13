@@ -287,7 +287,11 @@ C.. for GAS
       Write(LF,*)
       if (DoBlockDMRG) then
 #ifdef _NEW_BLOCK_
+#ifdef _BLOCK2_
+        Write(LF,Fmt2//'A,T45,T10)') 'CI Solver', 'BLOCK v2.0'
+#else
         Write(LF,Fmt2//'A,T45,T10)') 'CI Solver', 'BLOCK v1.5'
+#endif
 #else
         Write(LF,Fmt2//'A,T45,T10)') 'CI Solver', 'BLOCK v1.1'
 #endif

@@ -156,6 +156,9 @@ C   No changing about read in orbital information from INPORB yet.
       max_canonical = max_sweep*5
       chemps2_no4rdm = .false.
 #endif
+#ifdef _BLOCK2_
+      block2_no4rdm = .false.
+#endif
 * Init HFOCC array containing user defined occupancies for the active orbitals.
 * This array is used by DMRG codes (Block as well as ChemPS2).
 * Therefore I took it out of any ifdef preprocessing flag.
@@ -2852,12 +2855,21 @@ c       write(6,*)          '  --------------------------------------'
        ReadStatus=' O.K. after reading data after MXCA keyword.'
        Call ChkIfKey()
       End If
+#endif
 *---  Process NO4R command --------------------------------------------*
+#if defined _ENABLE_CHEMPS2_DMRG_ || defined _BLOCK2_
       If (KeyNO4R) Then
+#ifndef _BLOCK2_
        If (DBG) Then
          Write(6,*) ' Do not calculate 4RDM in CheMPS2'
        End If
-       chemps2_no4rdm=.True.
+       chemps2_no4rdm = .True.
+#else
+       If (DBG) Then
+         Write(6,*) ' Do not calculate 4RDM in Block2'
+       End If
+       block2_no4rdm = .True.
+#endif
        Call SetPos(LUInput,'NO4R',Line,iRc)
        Call ChkIfKey()
       End If

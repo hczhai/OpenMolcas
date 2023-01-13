@@ -33,7 +33,7 @@
 
       IMPLICIT REAL*8 (A-H,O-Z)
 
-#ifdef _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_CHEMPS2_DMRG_ || defined _BLOCK2_
       Integer iChMolpro(8)
 #endif
 
@@ -61,7 +61,7 @@
       ISTFCK=0
       ID=0
 
-#ifdef _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_CHEMPS2_DMRG_ || defined _BLOCK2_
       ifock=1
       norbtot = 0
       do iiash=1,nsym
@@ -83,7 +83,11 @@
       lSymMolpro=iChMolpro(lSym)
 
       LuFCK=isFreeUnit(27)
+#ifdef _ENABLE_CHEMPS2_DMRG_
       call molcas_open(LuFCK,'FOCK_CHEMPS2')
+#else
+      call molcas_open(LuFCK,'FOCK_MATRIX')
+#endif
       write(LuFCK,'(1X,A12,I2,A1)') '&FOCK NACT= ', norbtot,','
       write(LuFCK,'(2X,A7)',ADVANCE = "NO") 'ORBSYM='
       do iOrb=1,norbtot
@@ -230,7 +234,7 @@
         CALL DGEADD(CMOX(1+NOT*NIO+NIO),NOT,'N',
      *              VEC,NAO,'N',CMOX(1+NOT*NIO+NIO),NOT,NAO,NAO)
 
-#ifdef _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_CHEMPS2_DMRG_ || defined _BLOCK2_
         II=0
         NO1=IB+NFO+NIO
         DO NT=1,NAO

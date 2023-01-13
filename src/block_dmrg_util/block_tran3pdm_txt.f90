@@ -13,7 +13,7 @@
 ! Subroutine to translate general 3RDM to corresponding pseudocanonical RDM
 ! Written by Quan Phung, Leuven, 2018
 
-subroutine block_tran3pdm_txt( NACT, LXMAT, CHEMROOT )
+subroutine block_tran3pdm_txt( NACT, LXMAT, CHEMROOT, doG3 )
 
 IMPLICIT NONE
 
@@ -21,6 +21,7 @@ CHARACTER(LEN=50) :: file_3rdm
 
 INTEGER, INTENT(IN) :: chemroot
 INTEGER, INTENT(IN) :: nact
+LOGICAL, INTENT(IN) :: doG3
 INTEGER             :: nact2, nact3, nact4, nact5, nact6
 
 REAL(8), INTENT(IN) :: lxmat(nact*nact)
@@ -42,7 +43,7 @@ nact5 = nact4 * nact
 nact6 = nact5 * nact
 
 write(6,*) 'BLOCK> Translate 3RDM into canonical basis'
-call block_load3pdm_txt( NACT, threerdm, CHEMROOT, .FALSE. )
+call block_load3pdm_txt( NACT, threerdm, CHEMROOT, .FALSE., doG3 )
 
 allocate(outrdm (nact6))
 allocate(tmprdm (nact ))
@@ -84,7 +85,11 @@ ENDDO
 
 ! Make a new 3RDM file
 write(rootindex,"(I2)") chemroot-1
-file_3rdm="./node0/spatial_threepdm."//trim(adjustl(rootindex))//"."//trim(adjustl(rootindex))//".txt.trans"
+if (doG3) then
+  file_3rdm="./node0/spatial_threepdm."//trim(adjustl(rootindex))//"."//trim(adjustl(rootindex))//".txt.trans"
+else
+  file_3rdm="./node0/fock_fourpdm."//trim(adjustl(rootindex))//"."//trim(adjustl(rootindex))//".txt.trans"
+endif
 file_3rdm=trim(adjustl(file_3rdm))
 
 LU=isFreeUnit(41)

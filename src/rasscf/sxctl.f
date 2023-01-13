@@ -86,7 +86,7 @@
       logical :: doDMRG = .false.
 #endif
 
-#ifdef _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_CHEMPS2_DMRG_ || defined _BLOCK2_
       Integer iChMolpro(8)
 #endif
       ipDMAT=ip_Dummy
@@ -314,7 +314,7 @@ C         If(ipDMAT.ne.ip_Dummy) Call Free_Work(ipDMAT)
       CALL FOCK(WORK(LFOCK),WORK(LBM),FI,FA,
      &          D,WORK(LP),WORK(LQ),WORK(LPUVX),IFINAL,CMO)
 
-#ifdef _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_CHEMPS2_DMRG_ || defined _BLOCK2_
 * Quan17: Write FOCK_CHEMPS2 in the last iteration
       if (IFINAL.EQ.1) then
       norbtot = 0
@@ -337,7 +337,11 @@ C         If(ipDMAT.ne.ip_Dummy) Call Free_Work(ipDMAT)
       lSymMolpro=iChMolpro(lSym)
 
       LuFCK=isFreeUnit(27)
+#ifdef _ENABLE_CHEMPS2_DMRG_
       call molcas_open(LuFCK,'FOCK_CHEMPS2')
+#else
+      call molcas_open(LuFCK,'FOCK_MATRIX')
+#endif
       write(LuFCK,'(1X,A12,I2,A1)') '&FOCK NACT= ', norbtot,','
       write(LuFCK,'(2X,A7)',ADVANCE = "NO") 'ORBSYM='
       do iOrb=1,norbtot

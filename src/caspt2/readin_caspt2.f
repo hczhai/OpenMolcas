@@ -563,6 +563,11 @@ C as if the values were read directly from the file.
       Input % DoCumulant = .True.
 #endif
 
+#ifdef _ENABLE_BLOCK_DMRG_
+      Case('BLOC')
+      Input % doExactRDM = .True.
+#endif
+
 #ifdef _ENABLE_CHEMPS2_DMRG_
       Case('CHEM')
       Input % doExactRDM = .True.
@@ -643,6 +648,12 @@ C as if the values were read directly from the file.
       if ((dochemps2.EQV..True.) .and. (nStates.GT.1)) then
         write(6,*) 'CHEMPS2> Only State Specific calculation supported'
         Call Quit_OnUserError()
+      endif
+#endif
+
+#ifdef _BLOCK2_
+      if (Input % DoCumulant) then
+        Input % doExactRDM = .False.
       endif
 #endif
 

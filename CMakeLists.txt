@@ -1650,7 +1650,7 @@ if (BLOCK2)
                         )
                         list (APPEND ${prog}_defs "_ENABLE_BLOCK_DMRG_")
                         list (APPEND ${prog}_defs "_NEW_BLOCK_")
-                        list (APPEND ${util}_defs "_BLOCK2_")
+                        list (APPEND ${prog}_defs "_BLOCK2_")
                 endforeach ()
 
                 message ("-- BLOCK_DIR: ${BLOCK_DIR}")

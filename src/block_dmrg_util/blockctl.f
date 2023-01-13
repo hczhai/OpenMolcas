@@ -247,6 +247,13 @@ C Local print level (if any)
         write(LUTOTE,'(A8)') 'threepdm'
       endif
 
+#ifdef _BLOCK2_
+      If (IFINAL.EQ.2 .AND. Do3RDM .AND. NACTEL.GT.2 .AND.
+     &    .NOT. block2_no4rdm) Then
+        write(LUTOTE,'(A12)') 'fock_fourpdm'
+        write(LUTOTE,'(A23)') 'fock_matrix FOCK_MATRIX'
+      endif
+#endif
 
       close(LUTOTE)
 

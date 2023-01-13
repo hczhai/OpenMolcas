@@ -55,7 +55,7 @@ C DENSITY MATRICES FOR A CASSCF WAVE FUNCTION.
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
         ELSE
 #ifdef _ENABLE_BLOCK_DMRG_
-          if (DoCumulant) then
+          if (DoCumulant .or. DoExactRDM) then
 #ifndef _NEW_BLOCK_
             CALL block_load2pdm(NASHT,WORK(LG2TMP),
      &                          MSTATE(JSTATE),MSTATE(JSTATE))

@@ -89,7 +89,7 @@
       If(NACTEL.LE.2) GoTo 999
 
 #ifdef _NEW_BLOCK_
-      Call block_load3pdm_txt(nlev,G3T,mstate(jstate),.TRUE.)
+      Call block_load3pdm_txt(nlev,G3T,mstate(jstate),.TRUE., .TRUE.)
 #endif
       Do iz=1,nlev
         izSym=ism(iz)
@@ -138,6 +138,11 @@
             jz=idxG3(6,iG3)
             If(iy.EQ.jy.AND.iz.EQ.jz) Then
               G3(iG3)=W3(jt,ju,jv,jx)
+            endif
+
+            if (doCumulant) then
+
+            If(iy.EQ.jy.AND.iz.EQ.jz) Then
               If(IFF.NE.0) Then
 * CU4F3 Contrib. :: + G1(lT,lT)*G3(iP,iQ,jP,jQ,kP,kQ)
                 F3(iG3)=F3(iG3)+EASUM*G3(iG3)
@@ -170,11 +175,13 @@
      &                 -0.5D0*G1(iw,jz)*W3(jy,iw,jt,ju)*EPSA(iw)
               End Do
             End If
+
+            endif
           End Do
         End Do
       End Do
 *
-      If(IFF.NE.0) Then
+      If(IFF.NE.0 .AND. doCumulant) Then
         Do iG3=1,NG3
           it=idxG3(1,iG3)
           iu=idxG3(2,iG3)
@@ -186,6 +193,30 @@
      &                    G1,G2,F1,F2,it,iu,iv,ix,iy,iz)
         End Do
       End If
+
+#ifdef _BLOCK2_
+      if (.not. doCumulant) then
+        Call block_load3pdm_txt(nlev,G3T,mstate(jstate),.TRUE., .FALSE.)
+        Do iz=1,nlev
+          izSym=ism(iz)
+          Do iy=1,nlev
+            iyzSym=Mul(ism(iy),izSym)
+            W3 = G3T(:,:,:,:,iy,iz)
+            Do iG3=1,NG3
+              jt=idxG3(1,iG3)
+              ju=idxG3(2,iG3)
+              jv=idxG3(3,iG3)
+              jx=idxG3(4,iG3)
+              jy=idxG3(5,iG3)
+              jz=idxG3(6,iG3)
+              If(IFF.NE.0 .AND. iy.EQ.jy.AND.iz.EQ.jz) Then
+                F3(iG3)=W3(jt,ju,jv,jx)
+              endif
+            End Do
+          End Do
+        End Do
+      endif
+#endif
 
  999  Return
       End

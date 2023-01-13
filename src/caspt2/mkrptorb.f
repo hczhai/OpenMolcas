@@ -273,7 +273,6 @@ C Finally, loop again over symmetries, transforming the CI:
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
         ELSE
 #ifdef _ENABLE_BLOCK_DMRG_
-          if (DoCumulant) then
           NXMAT=NASHT**2
           CALL GETMEM('XMAT','ALLO','REAL',LXMAT,NXMAT)
           CALL DCOPY_(NXMAT,0.0D0,0,WORK(LXMAT),1)
@@ -286,11 +285,17 @@ C Finally, loop again over symmetries, transforming the CI:
      &                        MSTATE(JSTATE),MSTATE(JSTATE))
 #elif _NEW_BLOCK_
           CALL block_tran2pdm_txt(NASHT,WORK(LXMAT),MSTATE(JSTATE))
-          CALL block_tran3pdm_txt(NASHT,WORK(LXMAT),MSTATE(JSTATE))
+          CALL block_tran3pdm_txt(NASHT,WORK(LXMAT),MSTATE(JSTATE),
+     &                            .TRUE.)
+#ifdef _BLOCK2_
+            if (doExactRDM) then
+                  CALL block_tran3pdm_txt(NASHT,WORK(LXMAT),
+     &                            MSTATE(JSTATE), .FALSE.)
+            endif
+#endif
 #endif
 
           CALL GETMEM('XMAT','FREE','REAL',LXMAT,NXMAT)
-          endif
 #endif
 
 #ifdef _ENABLE_CHEMPS2_DMRG_

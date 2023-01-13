@@ -97,6 +97,9 @@
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                , chemps2_restart, chemps2_can, chemps2_no4rdm
 #endif
+#ifdef _BLOCK2_
+     &                , block2_no4rdm
+#endif
 #ifdef _DICE_
      &                , dice_stoc, dice_restart
 #endif
@@ -108,6 +111,9 @@
 #endif
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                , chemps2_restart, chemps2_can, chemps2_no4rdm
+#endif
+#ifdef _BLOCK2_
+     &                , block2_no4rdm
 #endif
 #ifdef _DICE_
      &                , dice_stoc, dice_restart
